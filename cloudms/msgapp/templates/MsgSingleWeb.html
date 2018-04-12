@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>云端签到</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script type="text/javascript">
+		function tj(msg){
+			var re =/^[0-9]{11}$/g;
+			if(msg == "add"){
+				var v=document.getElementsByName("username")[0].value
+				if(!re.test(v)){
+					alert("账号不合法！")
+					return
+				}
+				document.add.submit()
+			}
+			else if(msg == "del"){
+				var v=document.getElementsByName("delUsername")[0].value
+				if(!re.test(v)){
+					alert("账号不合法！")
+					return
+				}
+				document.del.submit()
+			}
+		}
+		function operateTj(msg){
+			if(msg=="operate")
+				document.operate.way.value = document.operate.operate.value
+			else if(msg=="clearDb")
+				document.operate.way.value = msg;
+			else if(msg=="refresh"){
+				refresh()
+				return
+			}
+    		document.operate.submit();
+		}
+		function refresh(){
+			var url = window.location.href
+			window.location.href=url
+		}
+	</script>
+	<style type="text/css">
+		.div-inline{ float: left} 
+	</style>
+</head>
+<body style="margin-left: 10%; "  bgcolor="#EBF2FC" text="#004080">
+	<div class="div-inline" style="width: 45%; height: 70%">
+	<h1>添加签到用户</h1>
+	<font size="5" color="red">
+		{% for k,v in data.items %}
+			{% if k == "addMsg" %}
+				{{ v }}
+			{% endif %}
+		{% endfor %}
+	</font>
+	<form action="/auto/" method="post" name="add">
+		{% csrf_token %}
+		<input type="text" name="way" hidden="true" value="addUser">
+		账号 <input type="text" name="username"> <br>
+		密码 <input type="text" name="password"> <br><br>
+		<input type="button" value="添加" onclick="tj('add')">
+	</form>
+
+	<h1>删除签到用户</h1>
+	<font size="5" color="red">
+		{% for k,v in data.items %}
+			{% if k == "delMsg" %}
+				{{ v }}
+			{% endif %}
+		{% endfor %}
+	</font>
+	<form action="/auto/" method="post" name="del">
+		{% csrf_token %}
+		<input type="text" name="way" hidden="true" value="delUser">
+		账号 <input type="text" name="delUsername"> <br><br>
+		<input type="button" value="删除" onclick="tj('del')">
+	</form>
+
+	<h1>查看已添加账号</h1>
+	<table border="1" bgcolor="#FFFFFF" bordercolor="#D5E3EC">
+		<thead>
+			<th bgcolor="#AABFFF">账号</th>
+			<th bgcolor="#AABFFF">加入时间</th>
+		</thead>
+		<br>
+		<tbody>
+			{% for k,v in data.items %}
+				{% if k == "data" %}
+					{% for line in v %}
+					<tr>
+						<td>{{ line.username }}</td>
+						<td align="center">{{ line.time }}</td>
+					</tr>
+					{% endfor %}
+				{% endif %}
+			{% endfor %}
+		</tbody>
+	</table>
+	</div>
+	<div  class="div-inline" style="width: 45%; height: 70%">
+	<h1>操作</h1>
+	<form action="/auto/" method="post" name="operate">
+		{% csrf_token %}
+		<input type="text" name="way" hidden="true" value="">
+		<input type="button" name="operate" value={{data.operate}} onclick="operateTj('operate')">
+		<input type="button" name="clearDb" value="清空记录" onclick="operateTj('clearDb')">
+			<input type="button" name="refresh" value="刷新记录" onclick="operateTj('refresh')">
+	</form>
+	<h1>签到记录</h1>
+	<table border="1" bgcolor="#FFFFFF" bordercolor="#D5E3EC">
+		<thead>
+			<th bgcolor="#AABFFF">账号</th>
+			<th bgcolor="#AABFFF">姓名</th>
+			<th bgcolor="#AABFFF">签到课程</th>
+			<th bgcolor="#AABFFF">签到时间</th>
+		</thead>
+		<br>
+		<tbody>
+			{% for k,v in data.items %}
+				{% if k == "checkInfo" %}
+					{% for line in v %}
+					<tr>
+						<td>{{ line.username }}</td>
+						<td>{{ line.fullname }}</td>
+						<td>{{ line.coursename }}</td>
+						<td>{{ line.time }}</td>
+					</tr>
+					{% endfor %}
+				{% endif %}
+			{% endfor %}
+		</tbody>
+	</table>
+	</div>
+</body>
+</html>
