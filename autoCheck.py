@@ -145,7 +145,7 @@ def startAtuoCheckIn(name, pwd):
         count=0
         while(True):
             if count>5:
-                count=0;
+                count=0
                 print('正在检测签到           ', end='\r')
             for clazz in clazzList:
                 if clazz['flag']>0:
@@ -162,7 +162,7 @@ def startAtuoCheckIn(name, pwd):
                         clazz['flag']=10;
                         print(datetime.datetime.today().strftime("%Y/%m/%d %H:%M:%S")+" "+clazz['clazz_name']+" 签到成功!")
             time.sleep(1)
-            count=count+1;
+            count=count+1
         
 
 name=input("账号：")
